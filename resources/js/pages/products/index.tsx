@@ -8,15 +8,14 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 "use client";
 
 const ProductIndex = () => {
-  const { products: productList } = usePage().props; // Fetching 'products' from Inertia
-  const { setRecords, records } = useProductStore(); // Access Zustand store
+  const { products: productList } = usePage().props; 
+  const { setRecords, records } = useProductStore(); 
 
-  // Effect to update Zustand store with Inertia 'products'
   useEffect(() => {
     if (productList) {
-      setRecords(productList); // Set 'productList' from Inertia to Zustand store
+      setRecords(productList);
     }
-  }, [productList, setRecords]); // Re-run when 'productList' changes
+  }, [productList, setRecords]);
 
   const [isSheetOpen, setIsSheetOpen] = useState(false); // State for controlling sheet visibility
   const toggleSheet = () => setIsSheetOpen((prevState) => !prevState); // Toggle sheet visibility

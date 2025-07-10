@@ -1,8 +1,11 @@
 import React from "react";
 import useProductIndexStore from "@/pages/products/stores/useProductIndexStore"; // Zustand store
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table";
+import { usePage } from "@inertiajs/react";
 
 const ProductTable = () => {
+    const { products: productList } = usePage().props; // Fetching 'products' from Inertia
+  console.log('ceeek',productList);
   const { records } = useProductIndexStore(); // Access 'records' from Zustand store
 
   console.log('cekk',records);
@@ -34,7 +37,7 @@ const ProductTable = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {records.map((record, index) => (
+        {productList.map((record, index) => (
           <TableRow key={record.id}>
             <TableCell>{++index}</TableCell>
             <TableCell>{record.name}</TableCell>
