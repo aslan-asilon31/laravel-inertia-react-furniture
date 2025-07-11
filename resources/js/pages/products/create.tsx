@@ -23,7 +23,7 @@ const CreateProduct = () => {
         </Card>
 
         <Card className="p-6 bg-white shadow-md rounded-lg">
-          <ProductCrudForm />  {/* Product form managed by Zustand store */}
+          <ProductCrudForm />  
         </Card>
       </div>
     </AppLayout>

@@ -1,109 +1,108 @@
 import React, { useEffect } from "react";
+import { useForm } from "react-hook-form"; // Import useForm from react-hook-form
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import useProductCrudStore from "@/pages/products/stores/useProductCrudStore"; // Zustand store
-import { useForm } from "@inertiajs/react";
+import { usePage } from "@inertiajs/react"; // To use props from Inertia
 
-const ProductCrudForm = () => {
-  const { records, setRecords, handleSubmit, resetSelectedProduct,filterform,initFilterForm, selectedProduct } = useProductCrudStore(); // Access Zustand store's data and methods
+const ProductCrudForm = ({ product }) => {
 
-  const form =  useForm({
-    email: 'Email 1',
-    password: 'Password 1',
-    remember: false,
+    const { product: record } = usePage().props;
+  
+
+  // Initialize react-hook-form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    reset,
+  } = useForm({
+    defaultValues: {
+      name: "",
+      selling_price: "",
+      availability: "",
+      description: "",
+    },
   });
 
-  const form2 =  useForm({
-    email: 'Email 1',
-    password: 'Password 1',
-    remember: false,
-  })
-
-
   useEffect(() => {
-      initFilterForm(form);
-
-    if (selectedProduct && selectedProduct.id) {
-      setRecords(selectedProduct); 
-    } else {
-      resetSelectedProduct();
+    if (record) {
+      setValue("name", record.name);
+      setValue("price", record.price);
+      setValue("slug", record.slug);
+      setValue("description", record.description);
     }
-  }, [selectedProduct, setRecords, resetSelectedProduct]);
+  }, [record, setValue]);
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    console.log(filterform);
-    // form2.setData({email:'Email 2221'});
-    filterform.setData({email:'Email 2222'})
-    // handleSubmit(records);  // Use handleSubmit from Zustand store to submit the form
+  const onSubmit = (data) => {
+    if (record) {
+      handleUpdateProduct(data);
+    } else {
+      handleCreateProduct(data);
+    }
+  };
+
+  const handleCreateProduct = async (data) => {
+    try {
+      await axios.post("/products", data); 
+      window.location.href = "/products"; 
+    } catch (error) {
+      console.error("Error creating product", error);
+    }
+  };
+
+  const handleUpdateProduct = async (data) => {
+    try {
+      await axios.put(`/products/${product.id}`, data); 
+      window.location.href = `/products/${product.id}`; 
+    } catch (error) {
+      console.error("Error updating product", error);
+    }
   };
 
   return (
-    <form onSubmit={handleFormSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-     <div>
-      {filterform?.data?.email}
-      {/* {form2?.data?.email} */}
-     </div>
-     
-      <div className="flex flex-col">
-        <Label htmlFor="name" className="block text-sm font-medium text-gray-700">
-          Product Name
-        </Label>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div>
+        <label htmlFor="name">Product Name</label>
         <Input
           id="name"
-          value={records.name || ""}
-          onChange={(e) => setRecords({ ...records, name: e.target.value })}
+          {...register("name", { required: "Name is required" })}
           placeholder="Enter product name"
-          className="mt-2 block w-full border border-gray-300 rounded-md p-2"
         />
+        {errors.name && <p className="text-red-500">{errors.name.message}</p>}
       </div>
 
-      <div className="flex flex-col">
-        <Label htmlFor="sku" className="block text-sm font-medium text-gray-700">
-          SKU
-        </Label>
+      <div>
+        <label htmlFor="selling_price">Selling Price</label>
         <Input
-          id="sku"
-          value={records.sku || ""}
-          onChange={(e) => setRecords({ ...records, sku: e.target.value })}
-          placeholder="Enter SKU"
-          className="mt-2 block w-full border border-gray-300 rounded-md p-2"
+          id="selling_price"
+          {...register("selling_price", { required: "Price is required" })}
+          placeholder="Enter product price"
         />
+        {errors.selling_price && (
+          <p className="text-red-500">{errors.selling_price.message}</p>
+        )}
       </div>
 
-      <div className="flex flex-col">
-        <Label htmlFor="slug" className="block text-sm font-medium text-gray-700">
-          Slug
-        </Label>
+      <div>
+        <label htmlFor="availability">Availability</label>
         <Input
-          id="slug"
-          value={records.slug || ""}
-          onChange={(e) => setRecords({ ...records, slug: e.target.value })}
-          placeholder="Enter slug"
-          className="mt-2 block w-full border border-gray-300 rounded-md p-2"
+          id="availability"
+          {...register("availability")}
+          placeholder="Enter availability"
         />
       </div>
 
-      <div className="flex flex-col">
-        <Label htmlFor="price" className="block text-sm font-medium text-gray-700">
-          Price
-        </Label>
-        <Input
-          id="price"
-          type="number"
-          value={records.price || ""}
-          onChange={(e) => setRecords({ ...records, price: e.target.value })}
-          placeholder="Enter price"
-          className="mt-2 block w-full border border-gray-300 rounded-md p-2"
+      <div>
+        <label htmlFor="description">Description</label>
+        <textarea
+          id="description"
+          {...register("description")}
+          placeholder="Enter product description"
         />
       </div>
 
-      <div className="col-span-2 mt-6">
-        <Button type="submit" className="w-full bg-blue-500 text-white rounded-md py-2">
-          {records.id ? "Save Changes" : "Create Product"}
-        </Button>
-      </div>
+      <Button type="submit">{product ? "Update Product" : "Create Product"}</Button>
     </form>
   );
 };

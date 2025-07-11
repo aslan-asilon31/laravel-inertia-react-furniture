@@ -2,23 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import AppLayout from "@/layouts/app-layout";
 import { Head, usePage } from "@inertiajs/react";
-import ProductTable from "@/pages/products/components/product-table"; // Product Table Component
-import useProductStore from "@/pages/products/stores/useProductIndexStore"; // Zustand store
+import ProductTable from "@/pages/products/components/product-table";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-"use client";
 
 const ProductIndex = () => {
-  const { products: productList } = usePage().props; 
-  const { setRecords, records } = useProductStore(); 
+  const { products: records } = usePage().props;
 
-  useEffect(() => {
-    if (productList) {
-      setRecords(productList);
-    }
-  }, [productList, setRecords]);
 
-  const [isSheetOpen, setIsSheetOpen] = useState(false); // State for controlling sheet visibility
-  const toggleSheet = () => setIsSheetOpen((prevState) => !prevState); // Toggle sheet visibility
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const toggleSheet = () => setIsSheetOpen((prevState) => !prevState);
 
   return (
     <AppLayout>
@@ -33,9 +25,9 @@ const ProductIndex = () => {
         <Card>
           <CardContent>
             {records && records.length > 0 ? (
-              <ProductTable /> // Show ProductTable if products are available
+              <ProductTable  />
             ) : (
-              <div>No products available</div> // Show a message if no products are found
+              <div>No products available</div>
             )}
           </CardContent>
         </Card>

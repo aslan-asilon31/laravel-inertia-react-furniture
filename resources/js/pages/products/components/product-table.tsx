@@ -1,28 +1,12 @@
 import React from "react";
-import useProductIndexStore from "@/pages/products/stores/useProductIndexStore"; // Zustand store
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table";
-import { usePage } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 
 const ProductTable = () => {
-    const { products: productList } = usePage().props; // Fetching 'products' from Inertia
-  console.log('ceeek',productList);
-  const { records } = useProductIndexStore(); // Access 'records' from Zustand store
-
-  console.log('cekk',records);
-  if (!Array.isArray(records) || records.length === 0) {
-    return <div>No products available</div>;
-  }
+  const { records } = usePage().props;
+console.log('ceeeek records',records);
 
   return (
-    // <div>
-    //   {records.map((product, index) => (
-    //     <div key={product.id} className="product-item">
-    //       <h2>{product.name}</h2>
-    //     </div>
-    //   ))}
-    // </div>
-
-
     <Table>
       <TableHeader>
         <TableRow>
@@ -37,7 +21,7 @@ const ProductTable = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {productList.map((record, index) => (
+        {records.map((record, index) => (
           <TableRow key={record.id}>
             <TableCell>{++index}</TableCell>
             <TableCell>{record.name}</TableCell>
@@ -50,7 +34,7 @@ const ProductTable = () => {
             <TableCell>{new Date(record.updated_at).toLocaleDateString()}</TableCell>
             <TableCell>{record.is_activated ? "Active" : "Inactive"}</TableCell>
             <TableCell>
-              {/* Add action buttons */}
+              {/* Add action buttons for edit and delete */}
             </TableCell>
           </TableRow>
         ))}
